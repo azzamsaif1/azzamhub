@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AzzamHub - Smart platform for planning, automation, language learning, financial tracking, and AI assistance."
+    />
+    <meta name="author" content="Azzam Saif" />
+    <title>AzzamHub – Smart Life & Work Platform</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <canvas id="bgChart"></canvas>
+
+    <header class="main-header">
+      <div class="container header-container">
+        <div class="logo">Azzam<span style="color: #00ff99">Hub</span></div>
+        <nav class="nav-menu">
+          <a href="#">Planner</a>
+          <a href="#">Automation</a>
+          <a href="#">Smart CV</a>
+          <a href="#">Lingo</a>
+          <a href="#">Invest</a>
+        </nav>
+        <div class="cta">
+          <button class="btn-primary" onclick="toggleForm('login')">
+            Get Started
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="auth-container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
+      <form
+        method="POST"
+        action="/login"
+        id="loginForm"
+        class="form-box active"
+      >
+        <h2>Welcome Back</h2>
+        <input
+          type="email"
+          name="email"
+          id="loginEmail"
+          placeholder="Email address"
+          required
+        />
+        <small class="error-message" id="loginEmailError"></small>
+
+        <div class="password-field">
+          <input
+            type="password"
+            name="password"
+            id="loginPassword"
+            placeholder="Password"
+            required
+          />
+          <small class="error-message" id="loginPasswordError"></small>
+          <span
+            class="toggle-password"
+            onclick="togglePassword('loginPassword', this)"
+            >👁️</span
+          >
+        </div>
+
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" /> Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <button class="btn-primary" type="submit">Login</button>
+        <p class="toggle-text">
+          Don't have an account?
+          <span onclick="toggleForm('register')">Create one</span>
+        </p>
+      </form>
+
+      <form method="POST" action="/register" id="registerForm" class="form-box">
+        <h2>Create Account</h2>
+        <input
+          type="text"
+          name="name"
+          id="registerName"
+          placeholder="Full Name"
+          required
+        />
+        <small class="error-message" id="registerNameError"></small>
+
+        <input
+          type="email"
+          name="email"
+          id="registerEmail"
+          placeholder="Email address"
+          required
+        />
+        <small class="error-message" id="registerEmailError"></small>
+
+        <div class="password-field">
+          <input
+            type="password"
+            name="password"
+            id="registerPassword"
+            placeholder="Password"
+            required
+          />
+          <small class="error-message" id="registerPasswordError"></small>
+          <span
+            class="toggle-password"
+            onclick="togglePassword('registerPassword', this)"
+            >👁️</span
+          >
+        </div>
+
+        <button class="btn-primary" type="submit">Register</button>
+        <p class="toggle-text">
+          Already have an account?
+          <span onclick="toggleForm('login')">Log in</span>
+        </p>
+      </form>
+    </div>
+
+    <script>
+      function toggleForm(type) {
+        const login = document.getElementById("loginForm");
+        const register = document.getElementById("registerForm");
+        if (type === "login") {
+          login.classList.add("active");
+          register.classList.remove("active");
+        } else {
+          login.classList.remove("active");
+          register.classList.add("active");
+        }
+      }
+
+      function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+          input.type = "text";
+          icon.textContent = "🙈";
+        } else {
+          input.type = "password";
+          icon.textContent = "👁️";
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", function () {
+        const flashes = document.querySelectorAll(".flash");
+        flashes.forEach((el) => {
+          setTimeout(() => {
+            el.style.opacity = "0";
+            setTimeout(() => el.remove(), 500);
+          }, 4000);
+        });
+
+        const remembered = localStorage.getItem("rememberedEmail");
+        if (remembered) {
+          document.getElementById("loginEmail").value = remembered;
+          document.querySelector(
+            "#loginForm .remember-me input"
+          ).checked = true;
+        }
+
+        document
+          .querySelector("#loginForm .remember-me input")
+          .addEventListener("change", function () {
+            if (this.checked) {
+              localStorage.setItem(
+                "rememberedEmail",
+                document.getElementById("loginEmail").value
+              );
+            } else {
+              localStorage.removeItem("rememberedEmail");
+            }
+          });
+      });
+      window.addEventListener("DOMContentLoaded", function () {
+        // ✅ التحكم في النموذج النشط بناءً على form_type من السيرفر
+        const formType = "{{ form_type|default('login') }}";
+        toggleForm(formType);
+
+        // ✅ الرسائل تختفي تلقائيًا
+        const flashes = document.querySelectorAll(".flash");
+        flashes.forEach((el) => {
+          setTimeout(() => {
+            el.style.opacity = "0";
+            setTimeout(() => el.remove(), 500);
+          }, 4000);
+        });
+      });
+    </script>
+  </body>
+</html>

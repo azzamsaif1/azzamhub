@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AzzamHub - Smart platform for planning, automation, language learning, financial tracking, and AI assistance."
+    />
+    <meta name="author" content="Azzam Saif" />
+    <title>AzzamHub – Smart Life & Work Platform</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* ===== Global Styles ===== */
+      :root {
+        --primary: #2ae66f;
+        --primary-dark: #20c45a;
+        --secondary: #00ff99;
+        --dark-bg: #0f0f0f;
+        --card-bg: rgba(30, 30, 30, 0.7);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --text-light: #f0f0f0;
+        --text-gray: #b0b0b0;
+        --success: #00cc66;
+        --warning: #ffcc00;
+        --danger: #ff4d4d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", system-ui, sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: linear-gradient(135deg, #0a1929 0%, #0d1b2a 100%);
+      }
+
+      body {
+        background: linear-gradient(135deg, #0a1929 0%, #0d1b2a 100%);
+        color: var(--text-light);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 10% 20%,
+            rgba(42, 230, 111, 0.1) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(0, 255, 153, 0.1) 0%,
+            transparent 20%
+          );
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      /* ===== Header & Navigation ===== */
+      .main-header {
+        background: rgba(10, 15, 20, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid rgba(42, 230, 111, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(to right, #fff, var(--secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .logo i {
+        font-size: 1.4rem;
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-menu a {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 0.5rem 0;
+      }
+
+      .nav-menu a:hover {
+        color: var(--secondary);
+      }
+
+      .nav-menu a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--secondary);
+        transition: width 0.3s ease;
+      }
+
+      .nav-menu a:hover::after {
+        width: 100%;
+      }
+
+      .cta .btn-primary {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: #000;
+        padding: 0.7rem 1.5rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(42, 230, 111, 0.3);
+      }
+
+      .cta .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(42, 230, 111, 0.4);
+      }
+
+      /* ===== Planner Section ===== */
+      .planner-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: rgba(15, 23, 30, 0.8);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(42, 230, 111, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .planner-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .planner-header h2 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(
+          to right,
+          var(--text-light),
+          var(--secondary)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .planner-header p {
+        color: var(--text-gray);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .task-input-section {
+        background: rgba(20, 30, 40, 0.6);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--card-border);
+      }
+
+      .task-input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .input-group label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-light);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .input-group input,
+      .input-group select {
+        padding: 0.9rem;
+        border-radius: 10px;
+        border: 1px solid rgba(42, 230, 111, 0.3);
+        background: rgba(10, 15, 20, 0.7);
+        color: var(--text-light);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .input-group input:focus,
+      .input-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(42, 230, 111, 0.2);
+      }
+
+      .btn-add-task {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: #000;
+        padding: 1rem 1.8rem;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      .btn-add-task:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(42, 230, 111, 0.4);
+      }
+
+      .ai-suggestions {
+        background: rgba(20, 30, 40, 0.4);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px dashed var(--primary);
+      }
+
+      .ai-suggestions h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1rem;
+        color: var(--secondary);
+      }
+
+      .suggestion-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+      }
+
+      .suggestion-item {
+        background: rgba(42, 230, 111, 0.15);
+        border: 1px solid rgba(42, 230, 111, 0.3);
+        border-radius: 50px;
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .suggestion-item:hover {
+        background: rgba(42, 230, 111, 0.25);
+        transform: translateY(-2px);
+      }
+
+      .task-list-container {
+        background: rgba(20, 30, 40, 0.6);
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 1px solid var(--card-border);
+      }
+
+      .task-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .task-list-header h3 {
+        color: var(--text-light);
+        font-size: 1.4rem;
+      }
+
+      .task-filters {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .filter-btn {
+        background: rgba(10, 15, 20, 0.7);
+        color: var(--text-gray);
+        border: 1px solid var(--card-border);
+        border-radius: 50px;
+        padding: 0.5rem 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-btn.active {
+        background: rgba(42, 230, 111, 0.2);
+        color: var(--secondary);
+        border-color: rgba(42, 230, 111, 0.5);
+      }
+
+      .task-list {
+        display: grid;
+        gap: 1.2rem;
+      }
+
+      .task-item {
+        background: rgba(25, 35, 45, 0.7);
+        border-radius: 15px;
+        padding: 1.2rem;
+        border-left: 4px solid var(--primary);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .task-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .task-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-light);
+      }
+
+      .task-type {
+        background: rgba(42, 230, 111, 0.15);
+        color: var(--secondary);
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .task-details {
+        display: flex;
+        gap: 1.5rem;
+        color: var(--text-gray);
+        font-size: 0.95rem;
+      }
+
+      .task-detail {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .task-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+      }
+
+      .task-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+      }
+
+      .btn-start {
+        background: var(--primary);
+        color: #000;
+      }
+
+      .btn-start:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-delete {
+        background: rgba(255, 77, 77, 0.2);
+        color: var(--danger);
+        border: 1px solid rgba(255, 77, 77, 0.3);
+      }
+
+      .btn-delete:hover {
+        background: rgba(255, 77, 77, 0.3);
+      }
+
+      .pomodoro-box {
+        margin-top: 1rem;
+        padding: 1.2rem;
+        background: rgba(10, 15, 20, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba(42, 230, 111, 0.3);
+        display: none;
+      }
+
+      .pomodoro-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .pomodoro-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--secondary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .timer-display {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 700;
+        font-family: "Courier New", monospace;
+        margin: 1.5rem 0;
+        color: var(--text-light);
+        text-shadow: 0 0 10px rgba(42, 230, 111, 0.5);
+      }
+
+      .timer-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .timer-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        min-width: 120px;
+        justify-content: center;
+      }
+
+      .btn-pause {
+        background: var(--warning);
+        color: #000;
+      }
+
+      .btn-resume {
+        background: var(--success);
+        color: #000;
+        display: none;
+      }
+
+      .btn-stop {
+        background: rgba(255, 77, 77, 0.9);
+        color: #fff;
+      }
+
+      .timer-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .session-message {
+        margin-top: 1.2rem;
+        padding: 1rem;
+        background: rgba(42, 230, 111, 0.1);
+        border-radius: 10px;
+        border-left: 3px solid var(--success);
+        font-size: 0.95rem;
+      }
+
+      .planner-summary {
+        margin-top: 2.5rem;
+        background: rgba(20, 30, 40, 0.6);
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 1px solid var(--card-border);
+      }
+
+      .summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .summary-card {
+        background: rgba(25, 35, 45, 0.7);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .summary-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-gray);
+      }
+
+      .summary-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--secondary);
+      }
+
+      .summary-description {
+        color: var(--text-gray);
+        font-size: 0.95rem;
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 4px;
+        width: 65%;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-light);
+        border: 1px solid var(--card-border);
+        padding: 0.7rem 1.5rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 2rem;
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: var(--primary);
+      }
+
+      /* ===== Responsive Design ===== */
+      @media (max-width: 992px) {
+        .planner-container {
+          padding: 1.5rem;
+        }
+
+        .nav-menu {
+          gap: 1.2rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-container {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-menu {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .task-input-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .task-list-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .task-filters {
+          flex-wrap: wrap;
+        }
+
+        .timer-controls {
+          flex-direction: column;
+        }
+
+        .timer-btn {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .main-header {
+          padding: 1rem;
+        }
+
+        .planner-container {
+          padding: 1rem;
+        }
+
+        .planner-header h2 {
+          font-size: 2rem;
+        }
+
+        .task-details {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .task-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Section -->
+    <header class="main-header">
+      <div class="header-container">
+        <!-- Logo -->
+        <div class="logo">
+          <i class="fas fa-brain"></i> Azzam<span>Hub</span>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
+          <a href="#"><i class="fas fa-home"></i> Home</a>
+          <a href="#"><i class="fas fa-calendar"></i> Planner</a>
+          <a href="#"><i class="fas fa-robot"></i> Automation</a>
+          <a href="#"><i class="fas fa-language"></i> Lingo</a>
+          <a href="#"><i class="fas fa-chart-line"></i> Invest</a>
+        </nav>
+
+        <!-- Call to Action -->
+        <div class="cta">
+          <a href="#" class="btn-primary"
+            ><i class="fas fa-rocket"></i> Get Started</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Planner Section -->
+    <section id="plannerSection">
+      <div class="planner-container">
+        <div class="planner-header">
+          <h2>
+            <i class="fas fa-calendar-alt"></i> AzzamPlanner – Daily Task
+            Manager
+          </h2>
+          <p>
+            Smart time management with AI-powered suggestions and productivity
+            tracking
+          </p>
+        </div>
+
+        <!-- Task Input Section -->
+        <div class="task-input-section">
+          <h3><i class="fas fa-plus-circle"></i> Add New Task</h3>
+          <div class="task-input-grid">
+            <div class="input-group">
+              <label for="taskTitle"
+                ><i class="fas fa-heading"></i> Task Title</label
+              >
+              <input
+                type="text"
+                id="taskTitle"
+                placeholder="What do you need to do?"
+              />
+            </div>
+
+            <div class="input-group">
+              <label for="taskDateTime"
+                ><i class="fas fa-clock"></i> Date & Time</label
+              >
+              <input type="datetime-local" id="taskDateTime" />
+            </div>
+
+            <div class="input-group">
+              <label for="taskType"><i class="fas fa-tag"></i> Category</label>
+              <select id="taskType">
+                <option value="Study">📘 Study</option>
+                <option value="Work">💼 Work</option>
+                <option value="Health">🏃 Health</option>
+                <option value="Sleep">😴 Sleep</option>
+                <option value="Other">🧠 Other</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="taskSubtype"
+                ><i class="fas fa-list"></i> Subcategory</label
+              >
+              <select id="taskSubtype" style="display: none"></select>
+            </div>
+          </div>
+
+          <div
+            id="timerDisplay"
+            style="font-size: 2em; color: #2ae66f; margin: 15px 0"
+          >
+            25:00
+          </div>
+          <button onclick="pauseTimer()">⏸ Pause</button>
+          <button onclick="resumeTimer()">▶ Resume</button>
+          <button
+            id="addTaskBtn"
+            class="btn-add-task"
+            onclick="handleAddTask()"
+          >
+            <i class="fas fa-plus"></i> Add Task
+          </button>
+        </div>
+        <!-- Task List Section -->
+        <div class="task-list-section">
+          <h3><i class="fas fa-tasks"></i> Your Tasks</h3>
+
+          {% if tasks %}
+          <ul class="task-list">
+            {% for task in tasks %}
+            <li>
+              <strong>{{ task.title }}</strong>
+              ({{ task.type }}{% if task.subtype %} - {{ task.subtype }}{% endif
+              %}) – {{ task.datetime.strftime('%Y-%m-%d %H:%M') }}
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="no-tasks">No tasks added yet.</p>
+          {% endif %}
+        </div>
+
+        <!-- AI Suggestions -->
+        <div class="ai-suggestions">
+          <h3><i class="fas fa-robot"></i> AI Task Suggestions</h3>
+          <div class="suggestion-list" id="aiSuggestions">
+            <div class="suggestion-item">جارٍ التحميل...</div>
+          </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="task-list-container">
+          <div class="task-list-header">
+            <h3><i class="fas fa-tasks"></i> Your Tasks</h3>
+            <div class="task-filters">
+              <button class="filter-btn active">All</button>
+              <button class="filter-btn">Today</button>
+              <button class="filter-btn">Upcoming</button>
+              <button class="filter-btn">Completed</button>
+            </div>
+          </div>
+
+          <div class="task-list" id="taskList">
+            <!-- Tasks will be added here dynamically -->
+          </div>
+        </div>
+
+        <!-- Planner Summary -->
+        <div class="planner-summary">
+          <div class="summary-header">
+            <h3><i class="fas fa-chart-pie"></i> Productivity Summary</h3>
+            <div class="task-filters">
+              <button class="filter-btn active">Today</button>
+              <button class="filter-btn">Week</button>
+              <button class="filter-btn">Month</button>
+            </div>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-title">
+                <i class="fas fa-check-circle"></i> Tasks Completed
+              </div>
+              <div class="summary-value">4/6</div>
+              <div class="progress-bar">
+                <div class="progress-fill"></div>
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-title">
+                <i class="fas fa-clock"></i> Focus Time
+              </div>
+              <div class="summary-value">2h 45m</div>
+              <div class="summary-description">Daily goal: 4 hours</div>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-title">
+                <i class="fas fa-brain"></i> Productivity Score
+              </div>
+              <div class="summary-value">87%</div>
+              <div class="summary-description">+12% from yesterday</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-back" id="backToMain">
+          <i class="fas fa-arrow-left"></i> Back to Main
+        </button>
+      </div>
+    </section>
+
+    <script>
+      // المتغيرات العامة
+      let currentTimer = null;
+      let timerInterval = null;
+      let tasks = [];
+      let sessionLog = [];
+
+      // عند تحميل الصفحة
+      document.addEventListener("DOMContentLoaded", function () {
+        loadTasks();
+        loadSessionLog();
+        setupEventListeners();
+        displayTasks();
+      });
+
+      function setupEventListeners() {
+        // زر إضافة مهمة
+        document
+          .getElementById("addTaskBtn")
+          .addEventListener("click", addTask);
+
+        // زر الرجوع
+        document
+          .getElementById("backToMain")
+          .addEventListener("click", function () {
+            window.location.href = "/";
+          });
+      }
+
+      function displayTasks() {
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
+
+        tasks.forEach((task) => {
+          const taskItem = document.createElement("div");
+          taskItem.className = `task-item ${task.completed ? "completed" : ""}`;
+          taskItem.id = `task-${task.id}`;
+
+          taskItem.innerHTML = `
+                    <div class="task-header">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-type">${task.type}${
+            task.subtype ? " - " + task.subtype : ""
+          }</div>
+                    </div>
+                    <div class="task-details">
+                        <div class="task-detail">
+                            <i class="fas fa-clock"></i>
+                            <span>${formatDateTime(
+                              new Date(task.dateTime)
+                            )}</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button id="start-btn-${
+                          task.id
+                        }" class="task-btn btn-start">
+                            <i class="fas fa-play"></i> ابدأ
+                        </button>
+                        <button class="task-btn btn-delete" onclick="deleteTask(${
+                          task.id
+                        })">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </div>
+                    <div id="timer-box-${
+                      task.id
+                    }" class="pomodoro-box" style="display: none;">
+                        <div class="pomodoro-header">
+                            <div class="pomodoro-title">
+                                <i class="fas fa-clock"></i> مؤقت بومودورو
+                            </div>
+                        </div>
+                        <div id="timer-display-${
+                          task.id
+                        }" class="timer-display">25:00</div>
+                        <div class="timer-controls">
+                            <button id="pause-btn-${
+                              task.id
+                            }" class="timer-btn btn-pause">
+                                <i class="fas fa-pause"></i> إيقاف
+                            </button>
+                            <button id="resume-btn-${
+                              task.id
+                            }" class="timer-btn btn-resume">
+                                <i class="fas fa-play"></i> استئناف
+                            </button>
+                            <button id="stop-btn-${
+                              task.id
+                            }" class="timer-btn btn-stop">
+                                <i class="fas fa-stop"></i> إيقاف
+                            </button>
+                        </div>
+                        <div id="session-message-${
+                          task.id
+                        }" class="session-message"></div>
+                    </div>
+                `;
+
+          taskList.appendChild(taskItem);
+
+          // إضافة مستمع حدث لزر البدء
+          document
+            .getElementById(`start-btn-${task.id}`)
+            .addEventListener("click", () => {
+              startTimer(task, 25); // 25 دقيقة لبومودورو
+            });
+        });
+      }
+
+      function startTimer(task, minutes) {
+        // إخفاء جميع صناديق المؤقتات أولاً
+        document.querySelectorAll(".pomodoro-box").forEach((box) => {
+          box.style.display = "none";
+        });
+
+        // إعداد المؤقت
+        currentTimer = {
+          taskId: task.id,
+          totalSeconds: minutes * 60,
+          remainingSeconds: minutes * 60,
+          isPaused: false,
+        };
+
+        // عرض صندوق المؤقت للمهمة المحددة
+        const timerBox = document.getElementById(`timer-box-${task.id}`);
+        timerBox.style.display = "block";
+
+        // بدء المؤقت
+        runTimer(currentTimer);
+
+        // تحديث واجهة المستخدم
+        document.getElementById(`pause-btn-${task.id}`).style.display = "flex";
+        document.getElementById(`resume-btn-${task.id}`).style.display = "none";
+      }
+
+      function runTimer(timer) {
+        // إيقاف أي مؤقت سابق
+        if (timerInterval) {
+          clearInterval(timerInterval);
+        }
+
+        // تحديث العرض فوراً
+        updateTimerDisplay(timer);
+
+        // بدء المؤقت
+        timerInterval = setInterval(() => {
+          if (!timer.isPaused && timer.remainingSeconds > 0) {
+            timer.remainingSeconds--;
+            updateTimerDisplay(timer);
+
+            if (timer.remainingSeconds === 0) {
+              timerComplete(timer);
+            }
+          }
+        }, 1000);
+      }
+
+      function updateTimerDisplay(timer) {
+        const minutes = Math.floor(timer.remainingSeconds / 60);
+        const seconds = timer.remainingSeconds % 60;
+        const display = document.getElementById(
+          `timer-display-${timer.taskId}`
+        );
+
+        if (display) {
+          display.textContent = `${minutes
+            .toString()
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        }
+      }
+
+      function pauseTimer(timer) {
+        timer.isPaused = true;
+        document.getElementById(`pause-btn-${timer.taskId}`).style.display =
+          "none";
+        document.getElementById(`resume-btn-${timer.taskId}`).style.display =
+          "flex";
+      }
+
+      function resumeTimer(timer) {
+        timer.isPaused = false;
+        document.getElementById(`pause-btn-${timer.taskId}`).style.display =
+          "flex";
+        document.getElementById(`resume-btn-${timer.taskId}`).style.display =
+          "none";
+      }
+
+      function stopTimer(timer) {
+        clearInterval(timerInterval);
+        document.getElementById(`timer-box-${timer.taskId}`).style.display =
+          "none";
+        currentTimer = null;
+      }
+
+      function timerComplete(timer) {
+        clearInterval(timerInterval);
+
+        const task = tasks.find((t) => t.id === timer.taskId);
+        const messageBox = document.getElementById(
+          `session-message-${timer.taskId}`
+        );
+
+        // إضافة إلى سجل الجلسات
+        const session = {
+          taskId: task.id,
+          taskTitle: task.title,
+          taskType: task.type,
+          duration: timer.totalSeconds / 60,
+          completedAt: new Date().toISOString(),
+        };
+
+        sessionLog.push(session);
+        saveSessionLog();
+
+        // عرض رسالة النجاح
+        messageBox.innerHTML = `
+                <i class="fas fa-check-circle"></i> تم إكمال الجلسة!<br>
+                أحسنت العمل في جلسة ${task.subtype || task.type}!<br>
+                <strong>ملخص:</strong> ركزت لمدة ${
+                  timer.totalSeconds / 60
+                } دقائق.
+            `;
+
+        // نطق رسالة النجاح
+        speakMessage(
+          `تم إكمال الجلسة. أحسنت العمل في جلسة ${task.subtype || task.type}!`
+        );
+
+        // تمييز المهمة كمكتملة
+        task.completed = true;
+        saveTasks();
+
+        // تحديث الواجهة بعد التأخير
+        setTimeout(() => {
+          document.getElementById(`timer-box-${timer.taskId}`).style.display =
+            "none";
+          displayTasks();
+          showMessage("تم إكمال المهمة!", "success");
+        }, 5000);
+      }
+
+      // وظائف مساعدة
+      function formatDateTime(date) {
+        return date.toLocaleString("ar-SA", {
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function speakMessage(text) {
+        if ("speechSynthesis" in window) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "ar-SA";
+          utterance.pitch = 1.1;
+          utterance.rate = 1;
+          speechSynthesis.speak(utterance);
+        }
+      }
+
+      function showMessage(message, type = "info") {
+        console.log(`[${type}] ${message}`);
+        // يمكنك استبدال هذا بتنفيذ عرض إشعار للمستخدم
+      }
+
+      function deleteTask(taskId) {
+        tasks = tasks.filter((task) => task.id !== taskId);
+        saveTasks();
+        displayTasks();
+        showMessage("تم حذف المهمة بنجاح", "success");
+      }
+
+      // وظائف التخزين
+      function saveTasks() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+      }
+
+      function loadTasks() {
+        const savedTasks = localStorage.getItem("tasks");
+        if (savedTasks) {
+          tasks = JSON.parse(savedTasks);
+        }
+      }
+
+      function saveSessionLog() {
+        localStorage.setItem("sessions", JSON.stringify(sessionLog));
+      }
+
+      function loadSessionLog() {
+        const savedSessions = localStorage.getItem("sessions");
+        if (savedSessions) {
+          sessionLog = JSON.parse(savedSessions);
+        }
+      }
+
+      // إضافة مهمة
+      function addTask() {
+        const title = document.getElementById("taskTitle").value.trim();
+        const dateTime = document.getElementById("taskDateTime").value;
+        const type = document.getElementById("taskType").value;
+        const subtype = document.getElementById("taskSubtype").value;
+
+        if (!title) {
+          showError("الرجاء إدخال عنوان المهمة");
+          return;
+        }
+
+        const task = {
+          id: Date.now(),
+          title,
+          dateTime,
+          type,
+          subtype: subtype || null,
+          completed: false,
+          createdAt: new Date().toISOString(),
+        };
+
+        tasks.push(task);
+        saveTasks();
+        displayTasks();
+
+        // إعادة تعيين النموذج
+        document.getElementById("taskTitle").value = "";
+        document.getElementById("taskDateTime").value = formatDateTimeLocal(
+          new Date()
+        );
+
+        // عرض رسالة النجاح
+        showMessage("تمت إضافة المهمة بنجاح!", "success");
+      }
+
+      function formatDateTimeLocal(date) {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
+      //load task
+      function loadTasks() {
+        fetch("/get_tasks")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Unauthorized or failed to fetch");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            tasks = data;
+            displayTasks();
+          })
+          .catch((error) => {
+            console.warn("Falling back to localStorage due to error:", error);
+            // fallback إلى localStorage إذا فشل الطلب
+            const savedTasks = localStorage.getItem("tasks");
+            if (savedTasks) {
+              tasks = JSON.parse(savedTasks);
+              displayTasks();
+            }
+          });
+      }
+    </script>
+
+    <script>
+      let timerInterval;
+      let timerRunning = false;
+      let remainingSeconds = 1500; // 25 minutes default
+
+      function startTimer(duration) {
+        clearInterval(timerInterval);
+        let time = duration;
+        timerRunning = true;
+        updateTimerDisplay(time);
+
+        timerInterval = setInterval(() => {
+          if (!timerRunning) return;
+
+          time--;
+          remainingSeconds = time;
+          updateTimerDisplay(time);
+
+          if (time <= 0) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            document.getElementById("timerDisplay").innerText =
+              "Session Complete!";
+          }
+        }, 1000);
+      }
+
+      function updateTimerDisplay(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        document.getElementById("timerDisplay").innerText =
+          String(minutes).padStart(2, "0") +
+          ":" +
+          String(secs).padStart(2, "0");
+      }
+
+      function handleAddTask() {
+        const title = document.getElementById("taskTitle").value.trim();
+        const dateTime = document.getElementById("taskDateTime").value;
+        const type = document.getElementById("taskType").value;
+        const subtype = document.getElementById("taskSubtype").value;
+
+        if (!title || !dateTime || !type) {
+          alert("Please fill all required fields.");
+          return;
+        }
+
+        // Start timer on task creation
+        startTimer(1500);
+
+        const task = {
+          title,
+          datetime: dateTime,
+          type,
+          subtype,
+        };
+
+        fetch("/add_task", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(task),
+        }).then((res) => {
+          if (res.ok) {
+            alert("Task added!");
+            document.getElementById("taskTitle").value = "";
+          } else {
+            alert("Failed to add task.");
+          }
+        });
+      }
+
+      function pauseTimer() {
+        timerRunning = false;
+      }
+
+      function resumeTimer() {
+        if (!timerRunning && remainingSeconds > 0) {
+          startTimer(remainingSeconds);
+        }
+      }
+
+      function showTaskWithTimer(task) {
+        const taskBox = document.createElement("div");
+        taskBox.className = "task-box";
+        taskBox.innerHTML = `
+                <h3>${task.title}</h3>
+                <div id="timerDisplay">00:00</div>
+                <button id="startBtn">ابدأ</button>
+                <button id="pauseBtn" style="display:none">إيقاف مؤقت</button>
+                <button id="resumeBtn" style="display:none">استئناف</button>
+                <button id="stopBtn" style="display:none">إيقاف</button>
+            `;
+        document.getElementById("taskList").appendChild(taskBox);
+
+        const startBtn = taskBox.querySelector("#startBtn");
+        const pauseBtn = taskBox.querySelector("#pauseBtn");
+        const resumeBtn = taskBox.querySelector("#resumeBtn");
+        const stopBtn = taskBox.querySelector("#stopBtn");
+        const timerDisplay = taskBox.querySelector("#timerDisplay");
+
+        let seconds = 0;
+        let paused = false;
+
+        startBtn.addEventListener("click", () => {
+          startBtn.style.display = "none";
+          pauseBtn.style.display = "inline";
+          stopBtn.style.display = "inline";
+          timerInterval = setInterval(() => {
+            if (!paused) {
+              seconds++;
+              const min = String(Math.floor(seconds / 60)).padStart(2, "0");
+              const sec = String(seconds % 60).padStart(2, "0");
+              timerDisplay.textContent = `${min}:${sec}`;
+            }
+          }, 1000);
+        });
+
+        pauseBtn.addEventListener("click", () => {
+          paused = true;
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "inline";
+        });
+
+        resumeBtn.addEventListener("click", () => {
+          paused = false;
+          resumeBtn.style.display = "none";
+          pauseBtn.style.display = "inline";
+        });
+
+        stopBtn.addEventListener("click", () => {
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "00:00";
+          pauseBtn.style.display = "none";
+          resumeBtn.style.display = "none";
+          stopBtn.style.display = "none";
+        });
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        fetch("/get_ai_suggestions")
+          .then((res) => res.json())
+          .then((data) => {
+            const container = document.getElementById("aiSuggestions");
+            container.innerHTML = ""; // Clear "جارٍ التحميل..."
+            data.suggestions.forEach((text) => {
+              const item = document.createElement("div");
+              item.className = "suggestion-item";
+              item.textContent = text;
+              container.appendChild(item);
+            });
+          })
+          .catch(() => {
+            document.getElementById("aiSuggestions").innerHTML =
+              "<div class='suggestion-item'>⚠️ حدث خطأ في تحميل الاقتراحات</div>";
+          });
+      });
+    </script>
+  </body>
+</html>

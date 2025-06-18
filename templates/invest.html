@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AzzamInvest - AI-Powered Investment Platform</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+      :root {
+        --primary: #00ff99;
+        --dark: #0f172a;
+        --darker: #0a0f1d;
+        --light: #f1f5f9;
+        --gray: #94a3b8;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --card-bg: rgba(30, 41, 59, 0.6);
+        --border: rgba(255, 255, 255, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, var(--darker), var(--dark));
+        color: var(--light);
+        min-height: 100vh;
+        padding-bottom: 2rem;
+      }
+
+      /* Header */
+      .main-header {
+        background-color: rgba(15, 23, 42, 0.95);
+        padding: 1.2rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        font-size: 1.6rem;
+        font-weight: bold;
+        color: var(--light);
+      }
+
+      .logo span {
+        color: var(--primary);
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 1.8rem;
+      }
+
+      .nav-menu a {
+        color: var(--light);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-menu a:hover {
+        color: var(--primary);
+      }
+
+      .cta .btn-primary {
+        background-color: var(--primary);
+        color: #000;
+        padding: 0.6rem 1.4rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .cta .btn-primary:hover {
+        transform: scale(1.05);
+        background-color: #00e68a;
+      }
+
+      /* Main Content */
+      .invest-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+
+      .page-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .page-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(90deg, var(--primary), #00e68a);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+      }
+
+      .page-header p {
+        color: var(--gray);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      /* Summary Cards */
+      .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .summary-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.8rem;
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 255, 153, 0.15);
+      }
+
+      .summary-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: var(--primary);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.2rem;
+      }
+
+      .card-title {
+        font-size: 1.2rem;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 255, 153, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.2rem;
+      }
+
+      .card-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .card-change {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .positive {
+        color: var(--success);
+      }
+
+      .negative {
+        color: var(--danger);
+      }
+
+      /* Dashboard Layout */
+      .dashboard-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      @media (max-width: 992px) {
+        .dashboard-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .dashboard-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.8rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-header h2 {
+        font-size: 1.4rem;
+        color: var(--light);
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .chart-container {
+        height: 300px;
+        position: relative;
+      }
+
+      /* Transactions */
+      .transactions-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.8rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .transactions-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .transactions-controls {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .filter-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border);
+        color: var(--light);
+        padding: 0.5rem 1.2rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: var(--primary);
+        color: #000;
+      }
+
+      .transactions-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .transactions-table th {
+        text-align: left;
+        padding: 1rem 1.2rem;
+        color: var(--gray);
+        font-weight: 500;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .transactions-table td {
+        padding: 1.2rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .transaction-category {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .category-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(0, 255, 153, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+      }
+
+      .transaction-amount {
+        font-weight: 600;
+      }
+
+      .income {
+        color: var(--success);
+      }
+
+      .expense {
+        color: var(--danger);
+      }
+
+      .transaction-status {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+
+      .status-completed {
+        background: rgba(34, 197, 94, 0.15);
+        color: var(--success);
+      }
+
+      .status-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+      }
+
+      /* Add Transaction */
+      .add-transaction-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        box-shadow: 0 5px 20px rgba(0, 255, 153, 0.3);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        z-index: 100;
+      }
+
+      .add-transaction-btn:hover {
+        transform: rotate(90deg) scale(1.1);
+      }
+
+      /* AI Features Section */
+      .ai-section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-top: 2rem;
+        backdrop-filter: blur(10px);
+      }
+
+      .ai-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+      }
+
+      .ai-features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .ai-feature-card {
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(0, 255, 153, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .ai-feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 255, 153, 0.2);
+        border-color: var(--primary);
+      }
+
+      .ai-feature-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .ai-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(0, 255, 153, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: var(--primary);
+      }
+
+      .premium-badge {
+        background: linear-gradient(135deg, #00ff99, #00e68a);
+        color: #000;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-left: auto;
+      }
+
+      .ai-feature-content {
+        margin-top: 1rem;
+      }
+
+      .ai-input-group {
+        margin: 1rem 0;
+      }
+
+      .ai-input-group input,
+      .ai-input-group select {
+        width: 100%;
+        padding: 0.8rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--light);
+        margin-bottom: 1rem;
+      }
+
+      .btn-ai {
+        background: linear-gradient(135deg, var(--primary), #00e68a);
+        color: #000;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-ai:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 255, 153, 0.3);
+      }
+
+      .ai-result {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        min-height: 150px;
+        display: none;
+      }
+
+      .ai-result-content {
+        line-height: 1.6;
+      }
+
+      .ai-result-content h4 {
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+      }
+
+      /* Subscription Plans */
+      .plans-section {
+        margin-top: 3rem;
+      }
+
+      .plans-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .plan-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .plan-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 255, 153, 0.2);
+      }
+
+      .plan-card.featured {
+        border: 2px solid var(--primary);
+        transform: scale(1.05);
+        z-index: 1;
+      }
+
+      .plan-card.featured::before {
+        content: "MOST POPULAR";
+        position: absolute;
+        top: 15px;
+        right: -30px;
+        background: var(--primary);
+        color: #000;
+        padding: 0.3rem 2rem;
+        font-size: 0.8rem;
+        font-weight: bold;
+        transform: rotate(45deg);
+      }
+
+      .plan-name {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--light);
+      }
+
+      .plan-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(90deg, var(--primary), #00e68a);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .plan-features {
+        list-style: none;
+        margin-bottom: 2rem;
+      }
+
+      .plan-features li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .plan-features li i {
+        color: var(--primary);
+      }
+
+      .btn-subscribe {
+        background: var(--primary);
+        color: #000;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-subscribe:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 255, 153, 0.3);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header-container {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-menu {
+          gap: 1rem;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .transactions-table {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+
+      /* Payment Modal */
+      .payment-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: var(--darker);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 500px;
+        padding: 2rem;
+        border: 1px solid var(--primary);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .close-modal {
+        background: none;
+        border: none;
+        color: var(--light);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--gray);
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--light);
+      }
+
+      .card-element {
+        padding: 0.8rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Alert */
+      .alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .alert.show {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      .alert-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .alert-error {
+        background: var(--danger);
+        color: white;
+      }
+
+      .alert-warning {
+        background: var(--warning);
+        color: black;
+      }
+      /* Finance Modal */
+      #finance-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        z-index: 3000;
+        max-width: 400px;
+        width: 90%;
+        backdrop-filter: blur(12px);
+        display: none; /* افتراضيًا غير ظاهر حتى يُفتح بزر */
+        box-shadow: 0 10px 30px rgba(0, 255, 153, 0.2);
+      }
+
+      /* نفس تنسيق الحقول داخل المودال */
+      #financeForm input,
+      #financeForm select {
+        width: 100%;
+        padding: 0.8rem;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        color: var(--light);
+        margin-bottom: 1rem;
+      }
+
+      /* تنسيق الأزرار داخل الفورم */
+      #financeForm button {
+        font-weight: 600;
+        padding: 0.7rem 1.2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      #financeForm button[type="submit"] {
+        background: var(--success);
+        color: white;
+      }
+
+      #financeForm button[type="submit"]:hover {
+        transform: scale(1.05);
+        background: #16a34a;
+      }
+
+      #financeForm button[type="button"] {
+        background: var(--danger);
+        color: white;
+      }
+
+      #financeForm button[type="button"]:hover {
+        transform: scale(1.05);
+        background: #dc2626;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Section -->
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-container">
+        <div class="logo">Azzam<span>Invest</span></div>
+        <nav class="nav-menu">
+          <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+          <a href="#"><i class="fas fa-chart-line"></i> Investments</a>
+          <a href="#"><i class="fas fa-wallet"></i> Portfolio</a>
+          <a href="#"><i class="fas fa-bell"></i> Alerts</a>
+          <a href="#"><i class="fas fa-user"></i> Account</a>
+        </nav>
+        <div class="cta">
+          <button class="btn-primary" id="account-balance">$24,560.75</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="invest-container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>
+          <i class="fas fa-chart-line"></i> AI-Powered Investment Platform
+        </h1>
+        <p>
+          Track investments, receive AI-driven insights, and make smarter
+          financial decisions
+        </p>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <!-- Total Balance Card -->
+        <div class="summary-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-wallet"></i> Total Balance
+            </h3>
+            <div class="card-icon"><i class="fas fa-wallet"></i></div>
+          </div>
+          <div class="card-value">$24,560.75</div>
+          <div class="card-change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>+$1,250 (5.4%) this month</span>
+          </div>
+        </div>
+
+        <!-- Monthly Income Card -->
+        <div class="summary-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-money-bill-wave"></i> Monthly Income
+            </h3>
+            <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+          </div>
+          <div class="card-value">$5,250.00</div>
+          <div class="card-change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>+$350 (7.1%) from last month</span>
+          </div>
+        </div>
+
+        <!-- Monthly Expenses Card -->
+        <div class="summary-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-shopping-cart"></i> Monthly Expenses
+            </h3>
+            <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+          </div>
+          <div class="card-value">$2,850.50</div>
+          <div class="card-change negative">
+            <i class="fas fa-arrow-down"></i>
+            <span>+$120 (4.4%) from last month</span>
+          </div>
+        </div>
+
+        <!-- Investment Growth Card -->
+        <div class="summary-card">
+          <div class="card-header">
+            <h3 class="card-title">
+              <i class="fas fa-seedling"></i> Investment Growth
+            </h3>
+            <div class="card-icon"><i class="fas fa-seedling"></i></div>
+          </div>
+          <div class="card-value">12.8%</div>
+          <div class="card-change positive">
+            <i class="fas fa-arrow-up"></i> <span>+3.2% from last quarter</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="dashboard-layout">
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h2><i class="fas fa-balance-scale"></i> Income vs Expenses</h2>
+            <select class="filter-btn">
+              <option>Current Month</option>
+              <option>Current Quarter</option>
+              <option>This Year</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="incomeExpenseChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h2><i class="fas fa-chart-pie"></i> Expense Distribution</h2>
+            <select class="filter-btn">
+              <option>Current Month</option>
+              <option>Current Quarter</option>
+              <option>This Year</option>
+            </select>
+          </div>
+          <div class="chart-container">
+            <canvas id="expenseDistributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Features -->
+      <section class="ai-section">
+        <div class="ai-header">
+          <h2><i class="fas fa-brain"></i> AI-Powered Investment Tools</h2>
+          <div class="premium-badge">PREMIUM FEATURES</div>
+        </div>
+
+        <div class="ai-features-grid">
+          <!-- Portfolio Analysis -->
+          <div class="ai-feature-card">
+            <div class="ai-feature-header">
+              <div class="ai-icon"><i class="fas fa-chart-pie"></i></div>
+              <h3>Portfolio Analysis</h3>
+              <div class="premium-badge">PRO</div>
+            </div>
+            <p>
+              Get AI-powered analysis of your investment portfolio with
+              personalized recommendations.
+            </p>
+            <div class="ai-feature-content">
+              <button class="btn-ai" onclick="analyzePortfolio()">
+                <i class="fas fa-magic"></i> Analyze Portfolio
+              </button>
+              <div class="ai-result" id="portfolio-analysis-result">
+                <div class="ai-result-content"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stock Predictions -->
+          <div class="ai-feature-card">
+            <div class="ai-feature-header">
+              <div class="ai-icon"><i class="fas fa-crystal-ball"></i></div>
+              <h3>Stock Predictions</h3>
+              <div class="premium-badge">PREMIUM</div>
+            </div>
+            <p>
+              AI-powered predictions for stock performance with technical
+              analysis.
+            </p>
+            <div class="ai-feature-content">
+              <div class="ai-input-group">
+                <input
+                  type="text"
+                  id="stock-symbol"
+                  placeholder="Stock Symbol (e.g. AAPL)"
+                />
+              </div>
+              <button class="btn-ai" onclick="predictStock()">
+                <i class="fas fa-search"></i> Predict Performance
+              </button>
+              <div class="ai-result" id="stock-prediction-result">
+                <div class="ai-result-content"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Alerts -->
+          <div class="ai-feature-card">
+            <div class="ai-feature-header">
+              <div class="ai-icon"><i class="fas fa-bell"></i></div>
+              <h3>Smart Alerts</h3>
+              <div class="premium-badge">PRO</div>
+            </div>
+            <p>
+              Intelligent alerts for market movements and investment
+              opportunities.
+            </p>
+            <div class="ai-feature-content">
+              <div class="ai-input-group">
+                <select id="alert-type">
+                  <option>Price Movement</option>
+                  <option>Market Trend</option>
+                  <option>Investment Opportunity</option>
+                  <option>Risk Alert</option>
+                </select>
+              </div>
+              <button class="btn-ai" onclick="setupAlert()">
+                <i class="fas fa-bell"></i> Set Up Alert
+              </button>
+              <div class="ai-result" id="alert-setup-result">
+                <div class="ai-result-content"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Subscription Plans -->
+      <section class="plans-section">
+        <div class="plans-header">
+          <h2><i class="fas fa-crown"></i> Premium Subscription Plans</h2>
+          <p>Unlock advanced AI-powered investment tools and insights</p>
+        </div>
+
+        <div class="plans-grid">
+          <!-- Basic Plan -->
+          <div class="plan-card">
+            <h3 class="plan-name">Basic</h3>
+            <div class="plan-price">$9.99<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="fas fa-check"></i> Basic Portfolio Tracking</li>
+              <li><i class="fas fa-check"></i> 5 AI Analyses per Month</li>
+              <li><i class="fas fa-check"></i> Daily Market Updates</li>
+              <li><i class="fas fa-times"></i> Stock Predictions</li>
+              <li><i class="fas fa-times"></i> Smart Alerts</li>
+              <li><i class="fas fa-times"></i> Premium Support</li>
+            </ul>
+            <button class="btn-subscribe" onclick="openPaymentModal('basic')">
+              Subscribe
+            </button>
+          </div>
+
+          <!-- Professional Plan -->
+          <div class="plan-card featured">
+            <h3 class="plan-name">Professional</h3>
+            <div class="plan-price">$29.99<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="fas fa-check"></i> Advanced Portfolio Tracking</li>
+              <li><i class="fas fa-check"></i> Unlimited AI Analyses</li>
+              <li><i class="fas fa-check"></i> Real-time Market Updates</li>
+              <li><i class="fas fa-check"></i> 10 Stock Predictions/Month</li>
+              <li><i class="fas fa-check"></i> Smart Alerts</li>
+              <li><i class="fas fa-times"></i> Premium Support</li>
+            </ul>
+            <button class="btn-subscribe" onclick="openPaymentModal('pro')">
+              Subscribe
+            </button>
+          </div>
+
+          <!-- Premium Plan -->
+          <div class="plan-card">
+            <h3 class="plan-name">Premium</h3>
+            <div class="plan-price">$99.99<span>/month</span></div>
+            <ul class="plan-features">
+              <li><i class="fas fa-check"></i> Premium Portfolio Tracking</li>
+              <li><i class="fas fa-check"></i> Unlimited AI Analyses</li>
+              <li><i class="fas fa-check"></i> Real-time Market Updates</li>
+              <li><i class="fas fa-check"></i> Unlimited Stock Predictions</li>
+              <li><i class="fas fa-check"></i> Advanced Smart Alerts</li>
+              <li><i class="fas fa-check"></i> 24/7 Premium Support</li>
+            </ul>
+            <button class="btn-subscribe" onclick="openPaymentModal('premium')">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Add Transaction Button -->
+      <!-- Add Transaction Button -->
+      <div class="add-transaction-btn" onclick="openFinanceModal()">
+        <i class="fas fa-plus"></i>
+      </div>
+
+      <!-- Transaction Modal -->
+      <div id="finance-modal" class="finance-modal">
+        <form id="financeForm">
+          <label for="type">Type:</label>
+          <select name="type" required>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+            <option value="investment">Investment</option>
+          </select>
+
+          <label for="amount">Amount:</label>
+          <input name="amount" type="number" placeholder="Amount" required />
+
+          <label for="category">Category:</label>
+          <input
+            name="category"
+            type="text"
+            placeholder="e.g. Salary, Rent..."
+            required
+          />
+
+          <div class="modal-actions">
+            <button type="submit" class="btn-save">💾 Save</button>
+            <button
+              type="button"
+              onclick="closeFinanceModal()"
+              class="btn-cancel"
+            >
+              ❌ Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- End invest-container -->
+    <script>
+      // Initialize Stripe
+      const stripe = Stripe(
+        "pk_test_51P0bFdGqN8d5Pv6z9x5cX7Z0l3X8bW7J6fK9s4D2m1rY3v6e8L9c0a1b2c3d4e5f6g7h8i9j0"
+      );
+      const elements = stripe.elements();
+      const cardElement = elements.create("card");
+
+      // Initialize Charts
+      document.addEventListener("DOMContentLoaded", function () {
+        // Income vs Expenses Chart
+        const incomeExpenseCtx = document
+          .getElementById("incomeExpenseChart")
+          .getContext("2d");
+        const incomeExpenseChart = new Chart(incomeExpenseCtx, {
+          type: "bar",
+          data: {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+            datasets: [
+              {
+                label: "Income",
+                data: [4200, 4350, 4800, 4650, 4900, 5250],
+                backgroundColor: "#22c55e",
+                borderRadius: 6,
+              },
+              {
+                label: "Expenses",
+                data: [2800, 2650, 2900, 3100, 2700, 2850],
+                backgroundColor: "#ef4444",
+                borderRadius: 6,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "top",
+                labels: {
+                  color: "#f1f5f9",
+                  font: {
+                    size: 14,
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "#94a3b8",
+                },
+              },
+              y: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "#94a3b8",
+                  callback: function (value) {
+                    return "$" + value;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Expense Distribution Chart
+        const expenseDistCtx = document
+          .getElementById("expenseDistributionChart")
+          .getContext("2d");
+        const expenseDistChart = new Chart(expenseDistCtx, {
+          type: "doughnut",
+          data: {
+            labels: [
+              "Housing",
+              "Transportation",
+              "Food",
+              "Shopping",
+              "Entertainment",
+              "Utilities",
+            ],
+            datasets: [
+              {
+                data: [35, 15, 20, 12, 10, 8],
+                backgroundColor: [
+                  "#00FF99",
+                  "#22c55e",
+                  "#3b82f6",
+                  "#f59e0b",
+                  "#ef4444",
+                  "#8b5cf6",
+                ],
+                borderWidth: 0,
+                hoverOffset: 15,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "right",
+                labels: {
+                  color: "#f1f5f9",
+                  font: {
+                    size: 13,
+                  },
+                  padding: 20,
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `${context.label}: ${context.parsed}%`;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Mount Stripe card element
+        cardElement.mount("#card-element");
+      });
+
+      // AI Portfolio Analysis
+      function analyzePortfolio() {
+        showAlert("Analyzing your portfolio with AI...", "warning");
+
+        // Simulate API call to backend
+        setTimeout(() => {
+          const analysisResult = `
+                    <h4>Portfolio Analysis Results</h4>
+                    <p><strong>Risk Level:</strong> Moderate (7/10)</p>
+                    <p><strong>Asset Allocation:</strong></p>
+                    <ul>
+                        <li>Stocks: 60% (Recommended: 55-65%)</li>
+                        <li>Bonds: 25% (Recommended: 20-30%)</li>
+                        <li>Real Estate: 10% (Recommended: 10-15%)</li>
+                        <li>Crypto: 5% (Recommended: 5-10%)</li>
+                    </ul>
+                    <p><strong>AI Recommendations:</strong></p>
+                    <ol>
+                        <li>Consider increasing tech sector exposure by 5%</li>
+                        <li>Rebalance portfolio quarterly to maintain target allocation</li>
+                        <li>Diversify with international ETFs for better global exposure</li>
+                    </ol>
+                    <p><strong>Projected Growth:</strong> 8.5-11.2% annually based on current market conditions</p>
+                `;
+
+          document.querySelector(
+            "#portfolio-analysis-result .ai-result-content"
+          ).innerHTML = analysisResult;
+          document.getElementById("portfolio-analysis-result").style.display =
+            "block";
+          showAlert("Portfolio analysis completed!", "success");
+        }, 2500);
+      }
+
+      // Stock Prediction
+      function predictStock() {
+        const symbol = document.getElementById("stock-symbol").value;
+        if (!symbol) {
+          showAlert("Please enter a stock symbol", "error");
+          return;
+        }
+
+        showAlert(`Analyzing ${symbol} with AI...`, "warning");
+
+        // Simulate API call to backend
+        setTimeout(() => {
+          const predictionResult = `
+                    <h4>${symbol} Stock Analysis</h4>
+                    <p><strong>Current Price:</strong> $172.35</p>
+                    <p><strong>AI Prediction (1 month):</strong> $178.50 - $185.25 (+3.5% to +7.5%)</p>
+                    <p><strong>Technical Analysis:</strong></p>
+                    <ul>
+                        <li>Strong support at $168.50</li>
+                        <li>Resistance at $175.80</li>
+                        <li>RSI: 58 (neutral)</li>
+                        <li>MACD showing bullish crossover</li>
+                    </ul>
+                    <p><strong>AI Recommendation:</strong> BUY</p>
+                    <p><strong>Confidence Level:</strong> 78%</p>
+                    <p><strong>Risk Factors:</strong> Market volatility, upcoming earnings report</p>
+                `;
+
+          document.querySelector(
+            "#stock-prediction-result .ai-result-content"
+          ).innerHTML = predictionResult;
+          document.getElementById("stock-prediction-result").style.display =
+            "block";
+          showAlert(`${symbol} analysis completed!`, "success");
+        }, 3000);
+      }
+
+      // Setup Alert
+      function setupAlert() {
+        const alertType = document.getElementById("alert-type").value;
+        showAlert(`Setting up ${alertType.toLowerCase()} alert...`, "warning");
+
+        // Simulate API call to backend
+        setTimeout(() => {
+          const alertResult = `
+                    <h4>Smart Alert Configured</h4>
+                    <p><strong>Alert Type:</strong> ${alertType}</p>
+                    <p><strong>Monitoring:</strong> Portfolio performance and market conditions</p>
+                    <p><strong>Notification Method:</strong> Email & Mobile App</p>
+                    <p><strong>AI Settings:</strong></p>
+                    <ul>
+                        <li>Threshold: 5% price movement</li>
+                        <li>Market trend sensitivity: High</li>
+                        <li>Daily summary reports enabled</li>
+                    </ul>
+                    <p>You'll receive notifications when AI detects significant changes or opportunities.</p>
+                `;
+
+          document.querySelector(
+            "#alert-setup-result .ai-result-content"
+          ).innerHTML = alertResult;
+          document.getElementById("alert-setup-result").style.display = "block";
+          showAlert("Smart alert configured successfully!", "success");
+        }, 2000);
+      }
+
+      // Payment Modal Functions
+      function openPaymentModal(plan) {
+        document.getElementById("planName").textContent =
+          plan.charAt(0).toUpperCase() + plan.slice(1);
+        document.getElementById("paymentModal").style.display = "flex";
+      }
+
+      function closePaymentModal() {
+        document.getElementById("paymentModal").style.display = "none";
+      }
+
+      function processPayment() {
+        const name = document.getElementById("card-name").value;
+        const email = document.getElementById("card-email").value;
+
+        if (!name || !email) {
+          showAlert("Please fill in all required fields", "error");
+          return;
+        }
+
+        showAlert("Processing payment...", "warning");
+
+        // In a real application, you would create a payment intent with Stripe
+        setTimeout(() => {
+          closePaymentModal();
+          showAlert(
+            "Payment successful! Premium features activated.",
+            "success"
+          );
+
+          // Update UI to show premium features
+          document.querySelectorAll(".premium-badge").forEach((badge) => {
+            badge.style.display = "none";
+          });
+          document.getElementById("account-balance").textContent =
+            "Premium Member";
+        }, 3000);
+      }
+
+      // Alert Notification System
+      function showAlert(message, type) {
+        const alert = document.getElementById("alert");
+        alert.className = `alert alert-${type} show`;
+        alert.querySelector(".alert-message").textContent = message;
+
+        setTimeout(() => {
+          alert.classList.remove("show");
+        }, 5000);
+      }
+
+      function openFinanceModal() {
+        const modal = document.getElementById("finance-modal");
+        if (modal.style.display === "block") {
+          modal.style.display = "none";
+        } else {
+          modal.style.display = "block";
+        }
+      }
+
+      function closeFinanceModal() {
+        document.getElementById("finance-modal").style.display = "none";
+      }
+      setInterval(() => {
+        const alerts = [
+          "AI Alert: Tech stocks showing bullish patterns",
+          "Market Update: NASDAQ up 1.2% in pre-market trading",
+          "Opportunity: Emerging markets ETF showing strong growth potential",
+          "Reminder: Rebalance your portfolio for optimal performance",
+        ];
+
+        const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+        showAlert(randomAlert, "success");
+      }, 15000);
+
+      // Handle form submission (Placeholder — سنربطه بـ Flask لاحقًا)
+      document
+        .getElementById("financeForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          const data = {
+            type: formData.get("type"),
+            amount: parseFloat(formData.get("amount")),
+            category: formData.get("category"),
+          };
+
+          console.log("Form submitted:", data); // سيتم إرسالها إلى Flask لاحقًا
+
+          closeFinanceModal();
+          alert("Transaction saved (simulated)."); // للتجربة فقط الآن
+        });
+
+      // Simulate market alerts
+    </script>
+  </body>
+</html>
