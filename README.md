@@ -1,6 +1,6 @@
-# AzzamInvest 💼📊
+azzamHub
 
-**AzzamInvest** is a modular, AI-powered productivity and career assistant.  
+**** is a modular, AI-powered productivity and career assistant.  
 It supports job matching, resume analysis, time management, and personal planning — all in one platform.
 
 ---
